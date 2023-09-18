@@ -11,6 +11,7 @@ import { Barber } from './entities/barber.entity';
 import { Graduation } from './entities/graduation.entity';
 import { Service } from './entities/service.entity';
 import { Price } from './entities/price.entity';
+import { GraduationModule } from './graduation/graduation.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { Price } from './entities/price.entity';
       }),
       inject: [ConfigService],
     }),
+    GraduationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

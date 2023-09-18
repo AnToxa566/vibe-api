@@ -11,8 +11,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import { BarbershopDTO } from 'src/dto/barbershop.dto';
-import { UpdateBarbershopDTO } from 'src/dto/update-barbershop.dto';
+import { BarbershopDTO } from 'src/dto/barbershop/barbershop.dto';
+import { UpdateBarbershopDTO } from 'src/dto/barbershop/update-barbershop.dto';
 import { BarbershopsService } from './barbershops.service';
 
 @Controller('barbershops')
@@ -27,18 +27,18 @@ export class BarbershopsController {
   @Post()
   @UsePipes(new ValidationPipe())
   async createBarbershop(
-    @Body() barbershop: BarbershopDTO,
+    @Body() payload: BarbershopDTO,
   ): Promise<BarbershopDTO> {
-    return await this.barbershopsService.createBarbershop(barbershop);
+    return await this.barbershopsService.createBarbershop(payload);
   }
 
   @Put(':id')
   @UsePipes(new ValidationPipe())
   async updateBarbershop(
     @Param('id', ParseIntPipe) id: number,
-    @Body() barbershop: UpdateBarbershopDTO,
+    @Body() payload: UpdateBarbershopDTO,
   ): Promise<BarbershopDTO> {
-    return await this.barbershopsService.updateBarbershop(id, barbershop);
+    return await this.barbershopsService.updateBarbershop(id, payload);
   }
 
   @Delete(':id')

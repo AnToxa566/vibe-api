@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { BarbershopDTO } from 'src/dto/barbershop.dto';
-import { UpdateBarbershopDTO } from 'src/dto/update-barbershop.dto';
+import { BarbershopDTO } from 'src/dto/barbershop/barbershop.dto';
+import { UpdateBarbershopDTO } from 'src/dto/barbershop/update-barbershop.dto';
 import { Barbershop } from 'src/entities/barbershop.entity';
 import { Repository } from 'typeorm';
 

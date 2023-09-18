@@ -8,6 +8,7 @@ import {
 
 import { Barbershop } from './barbershop.entity';
 import { Graduation } from './graduation.entity';
+import { Service } from './service.entity';
 
 @Entity()
 export class Price {
@@ -16,6 +17,10 @@ export class Price {
 
   @Column()
   value: number;
+
+  @ManyToOne(() => Service, (service) => service.prices)
+  @JoinColumn({ name: 'service_id' })
+  service: Service;
 
   @ManyToOne(() => Barbershop, (barbershop) => barbershop.prices)
   @JoinColumn({ name: 'barbershop_id' })
