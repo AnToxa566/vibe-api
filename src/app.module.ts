@@ -4,17 +4,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
 import { BarbershopsModule } from './barbershops/barbershops.module';
+import { GraduationModule } from './graduation/graduation.module';
+import { BarberModule } from './barber/barber.module';
+import { ServiceModule } from './service/service.module';
+import { PriceModule } from './price/price.module';
+import { UserModule } from './user/user.module';
 
 import { Barbershop } from './entities/barbershop.entity';
 import { Barber } from './entities/barber.entity';
 import { Graduation } from './entities/graduation.entity';
 import { Service } from './entities/service.entity';
 import { Price } from './entities/price.entity';
-import { GraduationModule } from './graduation/graduation.module';
-import { BarberModule } from './barber/barber.module';
-import { ServiceModule } from './service/service.module';
-import { PriceModule } from './price/price.module';
+import { User } from './entities/user.entity';
 
 @Module({
   imports: [
@@ -30,7 +33,7 @@ import { PriceModule } from './price/price.module';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         synchronize: true,
-        entities: [Barbershop, Barber, Graduation, Service, Price],
+        entities: [User, Barbershop, Barber, Graduation, Service, Price],
       }),
       inject: [ConfigService],
     }),
@@ -38,6 +41,7 @@ import { PriceModule } from './price/price.module';
     BarberModule,
     ServiceModule,
     PriceModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
