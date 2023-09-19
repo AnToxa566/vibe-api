@@ -14,6 +14,7 @@ import { Price } from './entities/price.entity';
 import { GraduationModule } from './graduation/graduation.module';
 import { BarberModule } from './barber/barber.module';
 import { ServiceModule } from './service/service.module';
+import { PriceModule } from './price/price.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ServiceModule } from './service/service.module';
     GraduationModule,
     BarberModule,
     ServiceModule,
+    PriceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
