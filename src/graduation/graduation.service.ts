@@ -17,7 +17,9 @@ export class GraduationService {
   ) {}
 
   async getGraduations(): Promise<GraduationDTO[]> {
-    return await this.graduationRepository.find();
+    return await this.graduationRepository.find({
+      relations: { prices: true },
+    });
   }
 
   async createGraduation(payload: GraduationDTO): Promise<GraduationDTO> {

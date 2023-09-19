@@ -14,7 +14,12 @@ export class BarbershopsService {
   ) {}
 
   async getBarbershops(): Promise<BarbershopDTO[]> {
-    return await this.barbershopRepository.find();
+    return await this.barbershopRepository.find({
+      relations: {
+        barbers: true,
+        prices: true,
+      },
+    });
   }
 
   async createBarbershop(payload: BarbershopDTO): Promise<BarbershopDTO> {
