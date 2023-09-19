@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -21,7 +22,6 @@ import { User } from './entities/user.entity';
 
 @Module({
   imports: [
-    BarbershopsModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -37,6 +37,12 @@ import { User } from './entities/user.entity';
       }),
       inject: [ConfigService],
     }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1d' },
+    }),
+    BarbershopsModule,
     GraduationModule,
     BarberModule,
     ServiceModule,

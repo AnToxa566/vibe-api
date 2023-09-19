@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -14,6 +15,7 @@ import {
 import { PriceService } from './price.service';
 import { PriceDTO } from 'src/dto/price/price.dto.';
 import { UpdatePriceDTO } from 'src/dto/price/update-price.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('prices')
 export class PriceController {
@@ -26,12 +28,14 @@ export class PriceController {
 
   @Post()
   @UsePipes(new ValidationPipe())
+  @UseGuards(AuthGuard)
   async createPrice(@Body() payload: PriceDTO): Promise<PriceDTO> {
     return await this.priceService.createPrice(payload);
   }
 
   @Put(':id')
   @UsePipes(new ValidationPipe())
+  @UseGuards(AuthGuard)
   async updatePrice(
     @Param('id', ParseIntPipe) id: number,
     @Body() payload: UpdatePriceDTO,
@@ -40,6 +44,7 @@ export class PriceController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   async deletePrice(@Param('id', ParseIntPipe) id: number): Promise<boolean> {
     return await this.priceService.deletePrice(id);
   }

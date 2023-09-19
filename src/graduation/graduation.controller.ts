@@ -7,12 +7,14 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 
 import { GraduationService } from './graduation.service';
 import { GraduationDTO } from 'src/dto/graduation/graduation.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('graduations')
 export class GraduationController {
@@ -25,6 +27,7 @@ export class GraduationController {
 
   @Post()
   @UsePipes(new ValidationPipe())
+  @UseGuards(AuthGuard)
   async createGraduation(
     @Body() payload: GraduationDTO,
   ): Promise<GraduationDTO> {
@@ -33,6 +36,7 @@ export class GraduationController {
 
   @Put(':id')
   @UsePipes(new ValidationPipe())
+  @UseGuards(AuthGuard)
   async updateGraduation(
     @Param('id', ParseIntPipe) id: number,
     @Body() payload: GraduationDTO,
@@ -41,6 +45,7 @@ export class GraduationController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   async deleteGraduation(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<boolean> {
