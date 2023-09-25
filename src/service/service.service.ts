@@ -18,13 +18,15 @@ export class ServiceService {
 
   async getServices(): Promise<ServiceDTO[]> {
     return await this.serviceRepository.find({
-      relations: { prices: true },
+      relations: {
+        prices: { barbershop: true, graduation: true },
+      },
     });
   }
 
   async createService(payload: ServiceDTO): Promise<ServiceDTO> {
     const secvice = await this.serviceRepository.findOne({
-      where: { title: payload.title },
+      where: { title: payload.title, subtitle: payload.subtitle },
     });
 
     if (secvice) {

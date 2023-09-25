@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -20,6 +24,20 @@ export class PriceService {
   }
 
   async createPrice(payload: PriceDTO): Promise<PriceDTO> {
+    const price = await this.priceRepository.findOne({
+      where: {
+        barbershop: { id: payload.barbershop.id },
+        graduation: { id: payload.graduation.id },
+        service: { id: payload.service.id },
+      },
+    });
+
+    if (price) {
+      throw new BadRequestException(
+        'Цена с заданными параметрами уже существует',
+      );
+    }
+
     return await this.priceRepository.save(payload);
   }
 

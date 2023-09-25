@@ -36,7 +36,7 @@ export class UserService {
 
     return {
       user,
-      access_token: await this.jwtService.signAsync(user),
+      accessToken: await this.jwtService.signAsync(user),
     };
   }
 
@@ -59,7 +59,7 @@ export class UserService {
 
     return {
       user: existingUser,
-      access_token: await this.jwtService.signAsync(user, {
+      accessToken: await this.jwtService.signAsync(user, {
         secret: process.env.JWT_SECRET,
       }),
     };

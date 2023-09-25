@@ -13,14 +13,23 @@ export class BarberService {
     private readonly barberRepository: Repository<Barber>,
   ) {}
 
-  async getBarbers(): Promise<BarberDTO[]> {
+  async getBarbers() {
     return await this.barberRepository.find({
       relations: { barbershop: true, graduation: true },
     });
   }
 
-  async createBarber(payload: BarberDTO): Promise<BarberDTO> {
-    return await this.barberRepository.save(payload);
+  async createBarber(
+    payload: BarberDTO,
+    image: Express.Multer.File,
+  ): Promise<Barber> {
+    console.log(image);
+    return await this.barberRepository.save({
+      ...payload,
+      barbershop: { id: Number(payload.barbershopId) },
+      graduation: { id: Number(payload.graduationId) },
+      imgPath: image.filename,
+    });
   }
 
   async updateBarber(id: number, payload: UpdateBarberDTO): Promise<Barber> {
