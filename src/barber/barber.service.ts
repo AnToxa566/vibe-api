@@ -19,11 +19,23 @@ export class BarberService {
     });
   }
 
+  async getBarber(id: number) {
+    const barber = await this.barberRepository.findOne({
+      where: { id },
+      relations: { barbershop: true, graduation: true },
+    });
+
+    if (!barber) {
+      throw new NotFoundException(`Барбер с ID ${id} не найден.`);
+    }
+
+    return barber;
+  }
+
   async createBarber(
     payload: BarberDTO,
     image: Express.Multer.File,
   ): Promise<Barber> {
-    console.log(image);
     return await this.barberRepository.save({
       ...payload,
       barbershop: { id: Number(payload.barbershopId) },
@@ -32,16 +44,26 @@ export class BarberService {
     });
   }
 
-  async updateBarber(id: number, payload: UpdateBarberDTO): Promise<Barber> {
+  async updateBarber(
+    id: number,
+    payload: UpdateBarberDTO,
+    image?: Express.Multer.File,
+  ): Promise<Barber> {
     const barber = await this.barberRepository.findOne({
       where: { id },
+      relations: { barbershop: true, graduation: true },
     });
 
     if (!barber) {
       throw new NotFoundException(`Барбер с ID ${id} не найден.`);
     }
 
-    await this.barberRepository.update(id, payload);
+    await this.barberRepository.update(id, {
+      name: payload.name,
+      barbershop: payload.barbershopId && { id: Number(payload.barbershopId) },
+      graduation: payload.graduationId && { id: Number(payload.graduationId) },
+      imgPath: image?.filename,
+    });
 
     return await this.barberRepository.findOne({ where: { id } });
   }

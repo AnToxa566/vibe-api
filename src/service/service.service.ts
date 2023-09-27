@@ -24,6 +24,18 @@ export class ServiceService {
     });
   }
 
+  async getService(id: number): Promise<ServiceDTO> {
+    const secvice = await this.serviceRepository.findOne({
+      where: { id },
+    });
+
+    if (!secvice) {
+      throw new NotFoundException(`Услуга с ID ${id} не найден.`);
+    }
+
+    return secvice;
+  }
+
   async createService(payload: ServiceDTO): Promise<ServiceDTO> {
     const secvice = await this.serviceRepository.findOne({
       where: { title: payload.title, subtitle: payload.subtitle },

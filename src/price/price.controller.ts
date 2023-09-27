@@ -26,6 +26,11 @@ export class PriceController {
     return await this.priceService.getPrices();
   }
 
+  @Get(':id')
+  async getPrice(@Param('id', ParseIntPipe) id: number): Promise<PriceDTO> {
+    return await this.priceService.getPrice(id);
+  }
+
   @Post()
   @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard)

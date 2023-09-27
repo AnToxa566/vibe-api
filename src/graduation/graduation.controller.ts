@@ -25,6 +25,13 @@ export class GraduationController {
     return await this.graduationService.getGraduations();
   }
 
+  @Get(':id')
+  async getGraduation(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<GraduationDTO> {
+    return await this.graduationService.getGraduation(id);
+  }
+
   @Post()
   @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard)

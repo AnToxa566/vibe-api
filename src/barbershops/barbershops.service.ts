@@ -22,6 +22,22 @@ export class BarbershopsService {
     });
   }
 
+  async getBarbershop(id: number): Promise<BarbershopDTO> {
+    const barbershop = await this.barbershopRepository.findOne({
+      where: { id },
+      relations: {
+        barbers: true,
+        prices: true,
+      },
+    });
+
+    if (!barbershop) {
+      throw new NotFoundException(`Барбершоп с ID ${id} не найден.`);
+    }
+
+    return barbershop;
+  }
+
   async createBarbershop(payload: BarbershopDTO): Promise<BarbershopDTO> {
     return await this.barbershopRepository.save(payload);
   }

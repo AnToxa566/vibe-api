@@ -23,6 +23,19 @@ export class PriceService {
     });
   }
 
+  async getPrice(id: number): Promise<PriceDTO> {
+    const price = await this.priceRepository.findOne({
+      where: { id },
+      relations: { service: true, barbershop: true, graduation: true },
+    });
+
+    if (!price) {
+      throw new NotFoundException(`Цена с ID ${id} не найден.`);
+    }
+
+    return price;
+  }
+
   async createPrice(payload: PriceDTO): Promise<PriceDTO> {
     const price = await this.priceRepository.findOne({
       where: {

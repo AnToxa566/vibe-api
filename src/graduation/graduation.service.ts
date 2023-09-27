@@ -22,6 +22,18 @@ export class GraduationService {
     });
   }
 
+  async getGraduation(id: number): Promise<GraduationDTO> {
+    const graduation = await this.graduationRepository.findOne({
+      where: { id },
+    });
+
+    if (!graduation) {
+      throw new NotFoundException(`Градация с ID ${id} не найден.`);
+    }
+
+    return graduation;
+  }
+
   async createGraduation(payload: GraduationDTO): Promise<GraduationDTO> {
     const graduation = await this.graduationRepository.findOne({
       where: { title: payload.title },
