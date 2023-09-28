@@ -10,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 
 import { User } from 'src/entities/user.entity';
 import { UserDTO } from 'src/dto/user/user.dto';
+import { UpdateUserDTO } from 'src/dto/user/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -32,36 +33,56 @@ export class UserService {
       throw new BadRequestException('Admin already exists.');
     }
 
-    user.password = await bcrypt.hash(user.password, await bcrypt.genSalt());
+    user.password = await this.getHashPassword(user.password);
 
     return {
       user,
-      accessToken: await this.jwtService.signAsync(user),
+      accessToken: await this.getAccessToken(user),
+    };
+  }
+
+  async updateAdminPassword(user: UpdateUserDTO) {
+    const existingUser = await this.checkUser(user.login, user.oldPassword);
+    existingUser.password = await this.getHashPassword(user.newPassword);
+
+    return {
+      user: await this.userRepository.save(existingUser),
+      accessToken: await this.getAccessToken(existingUser),
     };
   }
 
   async login(user: UserDTO) {
-    const existingUser = await this.userRepository.findOne({
-      where: { login: user.login },
-    });
+    const existingUser = await this.checkUser(user.login, user.password);
 
-    if (!existingUser) {
-      throw new NotFoundException(
-        `User with login ${user.login} does not exist`,
-      );
+    return {
+      user: existingUser,
+      accessToken: await this.getAccessToken(existingUser),
+    };
+  }
+
+  async checkUser(login: string, password: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { login } });
+
+    if (!user) {
+      throw new NotFoundException(`User with login ${login} does not exist`);
     }
 
-    const compared = await bcrypt.compare(user.password, existingUser.password);
+    const compared = await bcrypt.compare(password, user.password);
 
     if (!compared) {
       throw new BadRequestException('Password is incorrect');
     }
 
-    return {
-      user: existingUser,
-      accessToken: await this.jwtService.signAsync(user, {
-        secret: process.env.JWT_SECRET,
-      }),
-    };
+    return user;
+  }
+
+  async getHashPassword(password: string): Promise<string> {
+    return await bcrypt.hash(password, await bcrypt.genSalt());
+  }
+
+  async getAccessToken(user: UserDTO): Promise<string> {
+    return await this.jwtService.signAsync(JSON.stringify(user), {
+      secret: process.env.JWT_SECRET,
+    });
   }
 }

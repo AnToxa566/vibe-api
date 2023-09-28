@@ -25,8 +25,35 @@ export class ServiceService {
   }
 
   async getService(id: number): Promise<ServiceDTO> {
+    return await this.ckeckServiceExist(id);
+  }
+
+  async createService(payload: ServiceDTO): Promise<ServiceDTO> {
+    await this.ckeckServiceData(payload);
+    return await this.serviceRepository.save(payload);
+  }
+
+  async updateService(id: number, payload: ServiceDTO): Promise<ServiceDTO> {
+    await this.ckeckServiceExist(id);
+    await this.ckeckServiceData(payload);
+    await this.serviceRepository.update(id, payload);
+
+    return await this.getService(id);
+  }
+
+  async deleteService(id: number): Promise<boolean> {
+    await this.ckeckServiceExist(id);
+    await this.serviceRepository.delete(id);
+
+    return true;
+  }
+
+  async ckeckServiceExist(id: number) {
     const secvice = await this.serviceRepository.findOne({
       where: { id },
+      relations: {
+        prices: { barbershop: true, graduation: true },
+      },
     });
 
     if (!secvice) {
@@ -36,7 +63,7 @@ export class ServiceService {
     return secvice;
   }
 
-  async createService(payload: ServiceDTO): Promise<ServiceDTO> {
+  async ckeckServiceData(payload: ServiceDTO) {
     const secvice = await this.serviceRepository.findOne({
       where: { title: payload.title, subtitle: payload.subtitle },
     });
@@ -46,44 +73,5 @@ export class ServiceService {
         `Услуга с названием ${payload.title} уже существует`,
       );
     }
-
-    return await this.serviceRepository.save(payload);
-  }
-
-  async updateService(id: number, payload: ServiceDTO): Promise<ServiceDTO> {
-    const secvice = await this.serviceRepository.findOne({
-      where: { id },
-    });
-
-    if (!secvice) {
-      throw new NotFoundException(`Услуга с ID ${id} не найден.`);
-    }
-
-    const secviceWithSameTitle = await this.serviceRepository.findOne({
-      where: { title: payload.title },
-    });
-
-    if (secviceWithSameTitle) {
-      throw new BadRequestException(
-        `Услуга с названием ${payload.title} уже существует`,
-      );
-    }
-
-    await this.serviceRepository.update(id, payload);
-
-    return await this.serviceRepository.findOne({ where: { id } });
-  }
-
-  async deleteService(id: number): Promise<boolean> {
-    const secvice = await this.serviceRepository.findOne({
-      where: { id },
-    });
-
-    if (!secvice) {
-      throw new NotFoundException(`Услуга с ID ${id} не найден.`);
-    }
-
-    await this.serviceRepository.delete(id);
-    return true;
   }
 }

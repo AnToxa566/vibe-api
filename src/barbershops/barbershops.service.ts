@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { BarbershopDTO } from 'src/dto/barbershop/barbershop.dto';
@@ -23,6 +27,33 @@ export class BarbershopsService {
   }
 
   async getBarbershop(id: number): Promise<BarbershopDTO> {
+    return await this.ckeckBarbershopExist(id);
+  }
+
+  async createBarbershop(payload: BarbershopDTO): Promise<BarbershopDTO> {
+    await this.ckeckBarbershopData(payload);
+    return await this.barbershopRepository.save(payload);
+  }
+
+  async updateBarbershop(
+    id: number,
+    payload: UpdateBarbershopDTO,
+  ): Promise<BarbershopDTO> {
+    await this.ckeckBarbershopExist(id);
+    await this.ckeckBarbershopData(payload);
+    await this.barbershopRepository.update(id, payload);
+
+    return await this.getBarbershop(id);
+  }
+
+  async deleteBarbershop(id: number): Promise<boolean> {
+    await this.ckeckBarbershopExist(id);
+    await this.barbershopRepository.delete(id);
+
+    return true;
+  }
+
+  async ckeckBarbershopExist(id: number) {
     const barbershop = await this.barbershopRepository.findOne({
       where: { id },
       relations: {
@@ -38,37 +69,15 @@ export class BarbershopsService {
     return barbershop;
   }
 
-  async createBarbershop(payload: BarbershopDTO): Promise<BarbershopDTO> {
-    return await this.barbershopRepository.save(payload);
-  }
-
-  async updateBarbershop(
-    id: number,
-    payload: UpdateBarbershopDTO,
-  ): Promise<BarbershopDTO> {
+  async ckeckBarbershopData(payload: UpdateBarbershopDTO) {
     const barbershop = await this.barbershopRepository.findOne({
-      where: { id },
+      where: { address: payload.address },
     });
 
-    if (!barbershop) {
-      throw new NotFoundException(`Барбершоп с ID ${id} не найден.`);
+    if (barbershop) {
+      throw new BadRequestException(
+        `Барбершоп за адресом ${payload.address} уже существует`,
+      );
     }
-
-    await this.barbershopRepository.update(id, payload);
-
-    return await this.barbershopRepository.findOne({ where: { id } });
-  }
-
-  async deleteBarbershop(id: number): Promise<boolean> {
-    const barbershop = await this.barbershopRepository.findOne({
-      where: { id },
-    });
-
-    if (!barbershop) {
-      throw new NotFoundException(`Барбершоп с ID ${id} не найден.`);
-    }
-
-    await this.barbershopRepository.delete(id);
-    return true;
   }
 }
