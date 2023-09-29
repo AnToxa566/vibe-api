@@ -26,7 +26,7 @@ import { Barber } from 'src/entities/barber.entity';
 
 const fileOptions: MulterOptions = {
   storage: diskStorage({
-    destination: './barbers',
+    destination: './uploads',
     filename: (req, file, cb) => {
       const randomName = Array(32)
         .fill(null)
