@@ -8,4 +8,8 @@ export class ServiceDTO {
   @IsString()
   @IsNotEmpty()
   title: string;
+
+  @IsString()
+  @IsOptional()
+  subtitle: string;
 }

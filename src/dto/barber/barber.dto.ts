@@ -1,8 +1,5 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { Barbershop } from 'src/entities/barbershop.entity';
-import { Graduation } from 'src/entities/graduation.entity';
-
 export class BarberDTO {
   @IsOptional()
   @IsNumber()
@@ -14,11 +11,9 @@ export class BarberDTO {
 
   @IsString()
   @IsNotEmpty()
-  img_path: string;
+  barbershopId: string;
 
+  @IsString()
   @IsNotEmpty()
-  barbershop: Barbershop;
-
-  @IsNotEmpty()
-  graduation: Graduation;
+  graduationId: string;
 }

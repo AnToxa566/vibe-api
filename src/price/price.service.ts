@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -19,34 +23,56 @@ export class PriceService {
     });
   }
 
+  async getPrice(id: number): Promise<PriceDTO> {
+    return await this.ckeckPriceExist(id);
+  }
+
   async createPrice(payload: PriceDTO): Promise<PriceDTO> {
+    await this.ckeckPriceData(payload);
     return await this.priceRepository.save(payload);
   }
 
   async updatePrice(id: number, payload: UpdatePriceDTO): Promise<PriceDTO> {
-    const price = await this.priceRepository.findOne({
-      where: { id },
-    });
-
-    if (!price) {
-      throw new NotFoundException(`Цена с ID ${id} не найден.`);
-    }
-
+    await this.ckeckPriceExist(id);
+    await this.ckeckPriceData(payload);
     await this.priceRepository.update(id, payload);
 
-    return await this.priceRepository.findOne({ where: { id } });
+    return await this.getPrice(id);
   }
 
   async deletePrice(id: number): Promise<boolean> {
+    await this.ckeckPriceExist(id);
+    await this.priceRepository.delete(id);
+
+    return true;
+  }
+
+  async ckeckPriceExist(id: number) {
     const price = await this.priceRepository.findOne({
       where: { id },
+      relations: { service: true, barbershop: true, graduation: true },
     });
 
     if (!price) {
       throw new NotFoundException(`Цена с ID ${id} не найден.`);
     }
 
-    await this.priceRepository.delete(id);
-    return true;
+    return price;
+  }
+
+  async ckeckPriceData(payload: UpdatePriceDTO) {
+    const price = await this.priceRepository.findOne({
+      where: {
+        barbershop: { id: payload.barbershop.id },
+        graduation: { id: payload.graduation.id },
+        service: { id: payload.service.id },
+      },
+    });
+
+    if (price) {
+      throw new BadRequestException(
+        'Цена с заданными параметрами уже существует',
+      );
+    }
   }
 }

@@ -17,8 +17,8 @@ export class Barber {
   @Column()
   name: string;
 
-  @Column()
-  img_path: string;
+  @Column({ name: 'img_path' })
+  imgPath: string;
 
   @ManyToOne(() => Barbershop, (barbershop) => barbershop.barbers)
   @JoinColumn({ name: 'barbershop_id' })

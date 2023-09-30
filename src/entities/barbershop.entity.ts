@@ -1,4 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+
 import { Barber } from './barber.entity';
 import { Price } from './price.entity';
 
@@ -16,8 +17,8 @@ export class Barbershop {
   @Column()
   address: string;
 
-  @Column('character varying', { array: true })
-  phone_numbers: string[];
+  @Column('character varying', { array: true, name: 'phone_numbers' })
+  phoneNumbers: string[];
 
   @Column()
   schedule: string;

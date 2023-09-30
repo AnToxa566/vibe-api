@@ -25,6 +25,11 @@ export class ServiceController {
     return await this.serviceService.getServices();
   }
 
+  @Get(':id')
+  async getService(@Param('id', ParseIntPipe) id: number): Promise<ServiceDTO> {
+    return await this.serviceService.getService(id);
+  }
+
   @Post()
   @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard)

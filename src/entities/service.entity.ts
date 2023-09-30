@@ -10,6 +10,9 @@ export class Service {
   @Column()
   title: string;
 
+  @Column({ nullable: true })
+  subtitle: string;
+
   @OneToMany(() => Price, (price) => price.service, {
     onDelete: 'CASCADE',
   })

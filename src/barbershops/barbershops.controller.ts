@@ -26,6 +26,13 @@ export class BarbershopsController {
     return await this.barbershopsService.getBarbershops();
   }
 
+  @Get(':id')
+  async getBarbershop(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<BarbershopDTO> {
+    return await this.barbershopsService.getBarbershop(id);
+  }
+
   @Post()
   @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard)

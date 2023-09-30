@@ -15,7 +15,7 @@ export class BarbershopDTO {
   address: string;
 
   @IsArray()
-  phone_numbers: string[];
+  phoneNumbers: string[];
 
   @IsString()
   schedule: string;

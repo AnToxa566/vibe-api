@@ -22,7 +22,47 @@ export class GraduationService {
     });
   }
 
+  async getGraduation(id: number): Promise<GraduationDTO> {
+    return await this.ckeckGraduationExist(id);
+  }
+
   async createGraduation(payload: GraduationDTO): Promise<GraduationDTO> {
+    await this.ckeckGraduationData(payload);
+    return await this.graduationRepository.save(payload);
+  }
+
+  async updateGraduation(
+    id: number,
+    payload: GraduationDTO,
+  ): Promise<GraduationDTO> {
+    await this.ckeckGraduationExist(id);
+    await this.ckeckGraduationData(payload);
+    await this.graduationRepository.update(id, payload);
+
+    return await this.getGraduation(id);
+  }
+
+  async deleteGraduation(id: number): Promise<boolean> {
+    await this.ckeckGraduationExist(id);
+    await this.graduationRepository.delete(id);
+
+    return true;
+  }
+
+  async ckeckGraduationExist(id: number) {
+    const graduation = await this.graduationRepository.findOne({
+      where: { id },
+      relations: { prices: true },
+    });
+
+    if (!graduation) {
+      throw new NotFoundException(`Градация с ID ${id} не найден.`);
+    }
+
+    return graduation;
+  }
+
+  async ckeckGraduationData(payload: GraduationDTO) {
     const graduation = await this.graduationRepository.findOne({
       where: { title: payload.title },
     });
@@ -32,47 +72,5 @@ export class GraduationService {
         `Градация с названием ${payload.title} уже существует`,
       );
     }
-
-    return await this.graduationRepository.save(payload);
-  }
-
-  async updateGraduation(
-    id: number,
-    payload: GraduationDTO,
-  ): Promise<GraduationDTO> {
-    const graduation = await this.graduationRepository.findOne({
-      where: { id },
-    });
-
-    if (!graduation) {
-      throw new NotFoundException(`Градация с ID ${id} не найден.`);
-    }
-
-    const graduationWithSameTitle = await this.graduationRepository.findOne({
-      where: { title: payload.title },
-    });
-
-    if (graduationWithSameTitle) {
-      throw new BadRequestException(
-        `Градация с названием ${payload.title} уже существует`,
-      );
-    }
-
-    await this.graduationRepository.update(id, payload);
-
-    return await this.graduationRepository.findOne({ where: { id } });
-  }
-
-  async deleteGraduation(id: number): Promise<boolean> {
-    const graduation = await this.graduationRepository.findOne({
-      where: { id },
-    });
-
-    if (!graduation) {
-      throw new NotFoundException(`Градация с ID ${id} не найден.`);
-    }
-
-    await this.graduationRepository.delete(id);
-    return true;
   }
 }
