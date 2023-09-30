@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Barber } from 'src/entities/barber.entity';
-import { BarberDTO } from 'src/dto/barber/barber.dto';
-import { UpdateBarberDTO } from 'src/dto/barber/update-barber.dto';
+import { Barber } from '../entities/barber.entity';
+import { BarberDTO } from './dto/barber.dto';
+import { UpdateBarberDTO } from './dto/update-barber.dto';
 
 @Injectable()
 export class BarberService {

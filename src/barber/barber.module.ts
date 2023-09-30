@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BarberController } from './barber.controller';
 import { BarberService } from './barber.service';
-import { Barber } from 'src/entities/barber.entity';
+import { Barber } from '../entities/barber.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Barber])],

@@ -13,9 +13,9 @@ import {
 } from '@nestjs/common';
 
 import { PriceService } from './price.service';
-import { PriceDTO } from 'src/dto/price/price.dto.';
-import { UpdatePriceDTO } from 'src/dto/price/update-price.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { PriceDTO } from './dto/price.dto.';
+import { UpdatePriceDTO } from './dto/update-price.dto';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('prices')
 export class PriceController {

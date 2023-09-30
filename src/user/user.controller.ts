@@ -9,10 +9,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
+import { UserDTO } from './dto/user.dto';
 import { UserService } from './user.service';
-import { UserDTO } from 'src/dto/user/user.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { UpdateUserDTO } from 'src/dto/user/update-user.dto';
+import { AuthGuard } from '../guards/auth.guard';
+import { UpdateUserDTO } from './dto/update-user.dto';
 
 @Controller('users')
 export class UserController {

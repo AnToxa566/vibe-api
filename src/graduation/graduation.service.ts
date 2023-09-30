@@ -3,11 +3,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { Graduation } from 'src/entities/graduation.entity';
-import { GraduationDTO } from 'src/dto/graduation/graduation.dto';
+import { Graduation } from '../entities/graduation.entity';
+import { GraduationDTO } from './dto/graduation.dto';
 
 @Injectable()
 export class GraduationService {

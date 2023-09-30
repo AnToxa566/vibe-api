@@ -13,8 +13,8 @@ import {
 } from '@nestjs/common';
 
 import { GraduationService } from './graduation.service';
-import { GraduationDTO } from 'src/dto/graduation/graduation.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { GraduationDTO } from './dto/graduation.dto';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('graduations')
 export class GraduationController {

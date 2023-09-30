@@ -19,10 +19,10 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 
 import { BarberService } from './barber.service';
-import { BarberDTO } from 'src/dto/barber/barber.dto';
-import { UpdateBarberDTO } from 'src/dto/barber/update-barber.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { Barber } from 'src/entities/barber.entity';
+import { BarberDTO } from './dto/barber.dto';
+import { UpdateBarberDTO } from './dto/update-barber.dto';
+import { AuthGuard } from '../guards/auth.guard';
+import { Barber } from '../entities/barber.entity';
 
 const fileOptions: MulterOptions = {
   storage: diskStorage({

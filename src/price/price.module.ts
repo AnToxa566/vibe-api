@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { PriceController } from './price.controller';
 import { PriceService } from './price.service';
-import { Price } from 'src/entities/price.entity';
+import { Price } from '../entities/price.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Price])],

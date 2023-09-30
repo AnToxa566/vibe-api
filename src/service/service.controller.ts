@@ -13,8 +13,8 @@ import {
 } from '@nestjs/common';
 
 import { ServiceService } from './service.service';
-import { ServiceDTO } from 'src/dto/service/service.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { ServiceDTO } from './dto/service.dto';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('services')
 export class ServiceController {
