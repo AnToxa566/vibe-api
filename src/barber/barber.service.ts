@@ -70,6 +70,7 @@ export class BarberService {
   getBarberPayload(payload: UpdateBarberDTO, image: Express.Multer.File) {
     return {
       name: payload.name,
+      altegioId: Number(payload.altegioId),
       barbershop: payload.barbershopId && { id: Number(payload.barbershopId) },
       graduation: payload.graduationId && { id: Number(payload.graduationId) },
       imgPath: image?.filename,

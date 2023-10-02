@@ -7,6 +7,10 @@ export class BarberDTO {
 
   @IsString()
   @IsNotEmpty()
+  altegioId: string;
+
+  @IsString()
+  @IsNotEmpty()
   name: string;
 
   @IsString()

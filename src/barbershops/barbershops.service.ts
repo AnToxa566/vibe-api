@@ -39,8 +39,8 @@ export class BarbershopsService {
     id: number,
     payload: UpdateBarbershopDTO,
   ): Promise<BarbershopDTO> {
-    await this.ckeckBarbershopExist(id);
-    await this.ckeckBarbershopData(payload);
+    const existingBarbershop = await this.ckeckBarbershopExist(id);
+    await this.ckeckBarbershopData(payload, existingBarbershop);
     await this.barbershopRepository.update(id, payload);
 
     return await this.getBarbershop(id);
@@ -69,12 +69,22 @@ export class BarbershopsService {
     return barbershop;
   }
 
-  async ckeckBarbershopData(payload: UpdateBarbershopDTO) {
+  async ckeckBarbershopData(
+    payload: UpdateBarbershopDTO,
+    existingBarbershop?: UpdateBarbershopDTO,
+  ) {
     const barbershop = await this.barbershopRepository.findOne({
       where: { address: payload.address },
     });
 
     if (barbershop) {
+      if (
+        existingBarbershop &&
+        existingBarbershop.address === barbershop.address
+      ) {
+        return;
+      }
+
       throw new BadRequestException(
         `Барбершоп за адресом ${payload.address} уже существует`,
       );

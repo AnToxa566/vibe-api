@@ -14,6 +14,9 @@ export class Barber {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ name: 'altegio_id', unique: true })
+  altegioId: number;
+
   @Column()
   name: string;
 
