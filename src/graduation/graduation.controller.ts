@@ -12,9 +12,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import { GraduationService } from './graduation.service';
-import { GraduationDTO } from './dto/graduation.dto';
 import { AuthGuard } from '../guards/auth.guard';
+import { GraduationDTO } from './dto/graduation.dto';
+import { GraduationService } from './graduation.service';
+import { UpdateGraduationDTO } from './dto/update-graduation.dto';
 
 @Controller('graduations')
 export class GraduationController {
@@ -46,7 +47,7 @@ export class GraduationController {
   @UseGuards(AuthGuard)
   async updateGraduation(
     @Param('id', ParseIntPipe) id: number,
-    @Body() payload: GraduationDTO,
+    @Body() payload: UpdateGraduationDTO,
   ): Promise<GraduationDTO> {
     return await this.graduationService.updateGraduation(id, payload);
   }

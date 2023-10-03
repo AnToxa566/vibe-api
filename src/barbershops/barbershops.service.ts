@@ -18,12 +18,20 @@ export class BarbershopsService {
   ) {}
 
   async getBarbershops(): Promise<BarbershopDTO[]> {
-    return await this.barbershopRepository.find({
+    const barbershops = await this.barbershopRepository.find({
       relations: {
-        barbers: true,
+        barbers: { graduation: true, barbershop: true },
         prices: true,
       },
     });
+
+    barbershops.forEach((barbershop) => {
+      barbershop.barbers.sort(
+        (a, b) => b.graduation.priority - a.graduation.priority,
+      );
+    });
+
+    return barbershops;
   }
 
   async getBarbershop(id: number): Promise<BarbershopDTO> {
@@ -57,7 +65,7 @@ export class BarbershopsService {
     const barbershop = await this.barbershopRepository.findOne({
       where: { id },
       relations: {
-        barbers: true,
+        barbers: { graduation: true, barbershop: true },
         prices: true,
       },
     });

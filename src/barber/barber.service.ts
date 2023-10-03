@@ -16,6 +16,7 @@ export class BarberService {
   async getBarbers() {
     return await this.barberRepository.find({
       relations: { barbershop: true, graduation: true },
+      order: { graduation: { priority: 'DESC' } },
     });
   }
 

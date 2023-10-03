@@ -8,4 +8,8 @@ export class GraduationDTO {
   @IsString()
   @IsNotEmpty()
   title: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  priority: number;
 }
