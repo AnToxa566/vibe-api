@@ -14,6 +14,7 @@ import { BarberModule } from './barber/barber.module';
 import { ServiceModule } from './service/service.module';
 import { PriceModule } from './price/price.module';
 import { UserModule } from './user/user.module';
+import { PhotoModule } from './photo/photo.module';
 
 import { Barbershop } from './entities/barbershop.entity';
 import { Barber } from './entities/barber.entity';
@@ -21,6 +22,7 @@ import { Graduation } from './entities/graduation.entity';
 import { Service } from './entities/service.entity';
 import { Price } from './entities/price.entity';
 import { User } from './entities/user.entity';
+import { Photo } from './entities/photo.entity';
 
 @Module({
   imports: [
@@ -35,7 +37,7 @@ import { User } from './entities/user.entity';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         synchronize: true,
-        entities: [User, Barbershop, Barber, Graduation, Service, Price],
+        entities: [User, Barbershop, Barber, Graduation, Service, Price, Photo],
       }),
       inject: [ConfigService],
     }),
@@ -53,6 +55,7 @@ import { User } from './entities/user.entity';
     ServiceModule,
     PriceModule,
     UserModule,
+    PhotoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

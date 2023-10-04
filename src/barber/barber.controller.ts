@@ -24,7 +24,7 @@ import { UpdateBarberDTO } from './dto/update-barber.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { Barber } from '../entities/barber.entity';
 
-const fileOptions: MulterOptions = {
+export const fileOptions: MulterOptions = {
   storage: diskStorage({
     destination: './uploads',
     filename: (req, file, cb) => {
