@@ -1,19 +1,15 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class BarberDTO {
+export class GraduationDTO {
   @IsOptional()
   @IsNumber()
   id: number;
 
   @IsString()
   @IsNotEmpty()
-  name: string;
+  title: string;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  barbershopId: string;
-
-  @IsString()
-  @IsNotEmpty()
-  graduationId: string;
+  priority: number;
 }

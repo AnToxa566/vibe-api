@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Barber } from 'src/entities/barber.entity';
-import { BarberDTO } from 'src/dto/barber/barber.dto';
-import { UpdateBarberDTO } from 'src/dto/barber/update-barber.dto';
+import { Barber } from '../entities/barber.entity';
+import { BarberDTO } from './dto/barber.dto';
+import { UpdateBarberDTO } from './dto/update-barber.dto';
 
 @Injectable()
 export class BarberService {
@@ -16,6 +16,7 @@ export class BarberService {
   async getBarbers() {
     return await this.barberRepository.find({
       relations: { barbershop: true, graduation: true },
+      order: { graduation: { priority: 'DESC' } },
     });
   }
 
@@ -70,6 +71,7 @@ export class BarberService {
   getBarberPayload(payload: UpdateBarberDTO, image: Express.Multer.File) {
     return {
       name: payload.name,
+      altegioId: Number(payload.altegioId),
       barbershop: payload.barbershopId && { id: Number(payload.barbershopId) },
       graduation: payload.graduationId && { id: Number(payload.graduationId) },
       imgPath: image?.filename,

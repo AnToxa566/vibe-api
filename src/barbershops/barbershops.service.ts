@@ -3,12 +3,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { BarbershopDTO } from 'src/dto/barbershop/barbershop.dto';
-import { UpdateBarbershopDTO } from 'src/dto/barbershop/update-barbershop.dto';
-import { Barbershop } from 'src/entities/barbershop.entity';
-import { Repository } from 'typeorm';
+import { BarbershopDTO } from './dto/barbershop.dto';
+import { UpdateBarbershopDTO } from './dto/update-barbershop.dto';
+import { Barbershop } from '../entities/barbershop.entity';
 
 @Injectable()
 export class BarbershopsService {
@@ -18,12 +18,20 @@ export class BarbershopsService {
   ) {}
 
   async getBarbershops(): Promise<BarbershopDTO[]> {
-    return await this.barbershopRepository.find({
+    const barbershops = await this.barbershopRepository.find({
       relations: {
-        barbers: true,
+        barbers: { graduation: true, barbershop: true },
         prices: true,
       },
     });
+
+    barbershops.forEach((barbershop) => {
+      barbershop.barbers.sort(
+        (a, b) => b.graduation.priority - a.graduation.priority,
+      );
+    });
+
+    return barbershops;
   }
 
   async getBarbershop(id: number): Promise<BarbershopDTO> {
@@ -39,8 +47,8 @@ export class BarbershopsService {
     id: number,
     payload: UpdateBarbershopDTO,
   ): Promise<BarbershopDTO> {
-    await this.ckeckBarbershopExist(id);
-    await this.ckeckBarbershopData(payload);
+    const existingBarbershop = await this.ckeckBarbershopExist(id);
+    await this.ckeckBarbershopData(payload, existingBarbershop);
     await this.barbershopRepository.update(id, payload);
 
     return await this.getBarbershop(id);
@@ -57,7 +65,7 @@ export class BarbershopsService {
     const barbershop = await this.barbershopRepository.findOne({
       where: { id },
       relations: {
-        barbers: true,
+        barbers: { graduation: true, barbershop: true },
         prices: true,
       },
     });
@@ -69,12 +77,22 @@ export class BarbershopsService {
     return barbershop;
   }
 
-  async ckeckBarbershopData(payload: UpdateBarbershopDTO) {
+  async ckeckBarbershopData(
+    payload: UpdateBarbershopDTO,
+    existingBarbershop?: UpdateBarbershopDTO,
+  ) {
     const barbershop = await this.barbershopRepository.findOne({
       where: { address: payload.address },
     });
 
     if (barbershop) {
+      if (
+        existingBarbershop &&
+        existingBarbershop.address === barbershop.address
+      ) {
+        return;
+      }
+
       throw new BadRequestException(
         `Барбершоп за адресом ${payload.address} уже существует`,
       );

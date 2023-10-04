@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { GraduationController } from './graduation.controller';
 import { GraduationService } from './graduation.service';
-import { Graduation } from 'src/entities/graduation.entity';
+import { Graduation } from '../entities/graduation.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Graduation])],

@@ -9,6 +9,10 @@ export class ServiceDTO {
   @IsNotEmpty()
   title: string;
 
+  @IsNumber()
+  @IsNotEmpty()
+  priority: number;
+
   @IsString()
   @IsOptional()
   subtitle: string;

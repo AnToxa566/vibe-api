@@ -3,11 +3,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { Graduation } from 'src/entities/graduation.entity';
-import { GraduationDTO } from 'src/dto/graduation/graduation.dto';
+import { GraduationDTO } from './dto/graduation.dto';
+import { Graduation } from '../entities/graduation.entity';
+import { UpdateGraduationDTO } from './dto/update-graduation.dto';
 
 @Injectable()
 export class GraduationService {
@@ -19,6 +20,7 @@ export class GraduationService {
   async getGraduations(): Promise<GraduationDTO[]> {
     return await this.graduationRepository.find({
       relations: { prices: true },
+      order: { priority: 'DESC' },
     });
   }
 
@@ -33,10 +35,10 @@ export class GraduationService {
 
   async updateGraduation(
     id: number,
-    payload: GraduationDTO,
+    payload: UpdateGraduationDTO,
   ): Promise<GraduationDTO> {
-    await this.ckeckGraduationExist(id);
-    await this.ckeckGraduationData(payload);
+    const existingGraduation = await this.ckeckGraduationExist(id);
+    await this.ckeckGraduationData(payload, existingGraduation);
     await this.graduationRepository.update(id, payload);
 
     return await this.getGraduation(id);
@@ -62,12 +64,19 @@ export class GraduationService {
     return graduation;
   }
 
-  async ckeckGraduationData(payload: GraduationDTO) {
+  async ckeckGraduationData(
+    payload: UpdateGraduationDTO,
+    existingGraduation?: GraduationDTO,
+  ) {
     const graduation = await this.graduationRepository.findOne({
       where: { title: payload.title },
     });
 
     if (graduation) {
+      if (existingGraduation && existingGraduation.title === payload.title) {
+        return;
+      }
+
       throw new BadRequestException(
         `Градация с названием ${payload.title} уже существует`,
       );

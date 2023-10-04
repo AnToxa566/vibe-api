@@ -3,12 +3,12 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { Price } from 'src/entities/price.entity';
-import { PriceDTO } from 'src/dto/price/price.dto.';
-import { UpdatePriceDTO } from 'src/dto/price/update-price.dto';
+import { Price } from '../entities/price.entity';
+import { PriceDTO } from './dto/price.dto.';
+import { UpdatePriceDTO } from './dto/update-price.dto';
 
 @Injectable()
 export class PriceService {

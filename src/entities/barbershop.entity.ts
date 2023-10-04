@@ -8,6 +8,9 @@ export class Barbershop {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ name: 'company_id', unique: true })
+  companyId: number;
+
   @Column('float')
   lat: number;
 

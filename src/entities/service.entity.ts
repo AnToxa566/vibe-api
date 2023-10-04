@@ -8,6 +8,9 @@ export class Service {
   id: number;
 
   @Column()
+  priority: number;
+
+  @Column()
   title: string;
 
   @Column({ nullable: true })

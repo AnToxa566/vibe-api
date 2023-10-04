@@ -12,10 +12,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import { BarbershopDTO } from 'src/dto/barbershop/barbershop.dto';
-import { UpdateBarbershopDTO } from 'src/dto/barbershop/update-barbershop.dto';
+import { BarbershopDTO } from './dto/barbershop.dto';
+import { UpdateBarbershopDTO } from './dto/update-barbershop.dto';
 import { BarbershopsService } from './barbershops.service';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('barbershops')
 export class BarbershopsController {

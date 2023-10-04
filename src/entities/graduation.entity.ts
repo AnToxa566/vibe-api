@@ -11,6 +11,9 @@ export class Graduation {
   @Column()
   title: string;
 
+  @Column()
+  priority: number;
+
   @OneToMany(() => Barber, (barber) => barber.graduation, {
     onDelete: 'CASCADE',
   })
