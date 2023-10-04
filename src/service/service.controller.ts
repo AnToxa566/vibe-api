@@ -15,6 +15,7 @@ import {
 import { ServiceService } from './service.service';
 import { ServiceDTO } from './dto/service.dto';
 import { AuthGuard } from '../guards/auth.guard';
+import { UpdateServiceDTO } from './dto/update-service.dto';
 
 @Controller('services')
 export class ServiceController {
@@ -42,7 +43,7 @@ export class ServiceController {
   @UseGuards(AuthGuard)
   async updateService(
     @Param('id', ParseIntPipe) id: number,
-    @Body() payload: ServiceDTO,
+    @Body() payload: UpdateServiceDTO,
   ): Promise<ServiceDTO> {
     return await this.serviceService.updateService(id, payload);
   }
