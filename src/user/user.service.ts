@@ -34,6 +34,7 @@ export class UserService {
     }
 
     user.password = await this.getHashPassword(user.password);
+    await this.userRepository.save(user);
 
     return {
       user,
