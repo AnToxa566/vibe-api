@@ -37,8 +37,8 @@ export class GraduationService {
     id: number,
     payload: UpdateGraduationDTO,
   ): Promise<GraduationDTO> {
-    const existingGraduation = await this.ckeckGraduationExist(id);
-    await this.ckeckGraduationData(payload, existingGraduation);
+    await this.ckeckGraduationExist(id);
+    await this.ckeckGraduationData(payload, id);
     await this.graduationRepository.update(id, payload);
 
     return await this.getGraduation(id);
@@ -64,16 +64,13 @@ export class GraduationService {
     return graduation;
   }
 
-  async ckeckGraduationData(
-    payload: UpdateGraduationDTO,
-    existingGraduation?: GraduationDTO,
-  ) {
+  async ckeckGraduationData(payload: UpdateGraduationDTO, id?: number) {
     const graduation = await this.graduationRepository.findOne({
       where: { title: payload.title },
     });
 
     if (graduation) {
-      if (existingGraduation && existingGraduation.title === payload.title) {
+      if (id && graduation.id === id) {
         return;
       }
 

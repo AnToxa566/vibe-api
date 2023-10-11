@@ -34,7 +34,7 @@ export class PriceService {
 
   async updatePrice(id: number, payload: UpdatePriceDTO): Promise<PriceDTO> {
     await this.ckeckPriceExist(id);
-    await this.ckeckPriceData(payload);
+    await this.ckeckPriceData(payload, id);
     await this.priceRepository.update(id, payload);
 
     return await this.getPrice(id);
@@ -60,7 +60,7 @@ export class PriceService {
     return price;
   }
 
-  async ckeckPriceData(payload: UpdatePriceDTO) {
+  async ckeckPriceData(payload: UpdatePriceDTO, id?: number) {
     const price = await this.priceRepository.findOne({
       where: {
         barbershop: { id: payload.barbershop.id },
@@ -70,6 +70,10 @@ export class PriceService {
     });
 
     if (price) {
+      if (id && price.id === id) {
+        return;
+      }
+
       throw new BadRequestException(
         'Цена с заданными параметрами уже существует',
       );

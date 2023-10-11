@@ -39,8 +39,8 @@ export class ServiceService {
     id: number,
     payload: UpdateServiceDTO,
   ): Promise<ServiceDTO> {
-    const existingServise = await this.ckeckServiceExist(id);
-    await this.ckeckServiceData(payload, existingServise);
+    await this.ckeckServiceExist(id);
+    await this.ckeckServiceData(payload, id);
     await this.serviceRepository.update(id, payload);
 
     return await this.getService(id);
@@ -68,27 +68,18 @@ export class ServiceService {
     return secvice;
   }
 
-  async ckeckServiceData(
-    payload: UpdateServiceDTO,
-    existingService?: UpdateServiceDTO,
-  ) {
+  async ckeckServiceData(payload: UpdateServiceDTO, id?: number) {
     const secvice = await this.serviceRepository.findOne({
       where: { title: payload.title, subtitle: payload.subtitle },
     });
 
     if (secvice) {
-      if (
-        existingService &&
-        existingService.title === payload.title &&
-        existingService.subtitle == payload.subtitle
-      ) {
+      if (id && secvice.id === id) {
         return;
       }
 
       throw new BadRequestException(
-        `Услуга с названием ${payload.title} (${
-          payload.subtitle || '-'
-        }) уже существует`,
+        `Услуга ${payload.title} (${payload.subtitle || '-'}) уже существует`,
       );
     }
   }
