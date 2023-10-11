@@ -48,6 +48,7 @@ import { Photo } from './entities/photo.entity';
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/api',
     }),
     BarbershopsModule,
     GraduationModule,
