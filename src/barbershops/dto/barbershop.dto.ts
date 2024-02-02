@@ -33,4 +33,8 @@ export class BarbershopDTO {
   @IsString()
   @IsNotEmpty()
   schedule: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  priority: number;
 }

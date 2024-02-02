@@ -29,7 +29,7 @@ export class UserService {
   async createAdmin(user: UserDTO) {
     const users = await this.userRepository.find();
 
-    if (users.length) {
+    if (users.length >= 2) {
       throw new BadRequestException('Admin already exists.');
     }
 

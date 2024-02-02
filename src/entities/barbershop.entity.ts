@@ -26,6 +26,9 @@ export class Barbershop {
   @Column()
   schedule: string;
 
+  @Column({ default: 1 })
+  priority: number;
+
   @OneToMany(() => Barber, (barber) => barber.barbershop, {
     onDelete: 'CASCADE',
   })

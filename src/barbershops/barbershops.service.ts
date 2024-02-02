@@ -25,6 +25,8 @@ export class BarbershopsService {
       },
     });
 
+    barbershops.sort((a, b) => b.priority - a.priority);
+
     barbershops.forEach((barbershop) => {
       barbershop.barbers.sort(
         (a, b) => b.graduation.priority - a.graduation.priority,
