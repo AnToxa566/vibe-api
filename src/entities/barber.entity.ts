@@ -8,6 +8,7 @@ import {
 
 import { Barbershop } from './barbershop.entity';
 import { Graduation } from './graduation.entity';
+import { imageUrlTransformer } from '../storage/image-url';
 
 @Entity()
 export class Barber {
@@ -20,7 +21,7 @@ export class Barber {
   @Column()
   name: string;
 
-  @Column({ name: 'img_path' })
+  @Column({ name: 'img_path', transformer: imageUrlTransformer })
   imgPath: string;
 
   @ManyToOne(() => Barbershop, (barbershop) => barbershop.barbers)

@@ -1,16 +1,22 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Barber } from '../entities/barber.entity';
 import { BarberDTO } from './dto/barber.dto';
 import { UpdateBarberDTO } from './dto/update-barber.dto';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable()
 export class BarberService {
   constructor(
     @InjectRepository(Barber)
     private readonly barberRepository: Repository<Barber>,
+    private readonly storageService: StorageService,
   ) {}
 
   async getBarbers() {
@@ -28,9 +34,23 @@ export class BarberService {
     payload: BarberDTO,
     image: Express.Multer.File,
   ): Promise<Barber> {
-    return await this.barberRepository.save(
-      this.getBarberPayload(payload, image),
-    );
+    if (!image) {
+      throw new BadRequestException('Необходимо загрузить изображение.');
+    }
+
+    const imgKey = await this.storageService.upload(image);
+    let barber: Barber;
+
+    try {
+      barber = await this.barberRepository.save(
+        this.getBarberPayload(payload, imgKey),
+      );
+    } catch (error) {
+      await this.storageService.delete(imgKey);
+      throw error;
+    }
+
+    return await this.getBarber(barber.id);
   }
 
   async updateBarber(
@@ -38,19 +58,30 @@ export class BarberService {
     payload: UpdateBarberDTO,
     image?: Express.Multer.File,
   ): Promise<Barber> {
-    await this.ckeckBarberExist(id);
+    const barber = await this.ckeckBarberExist(id);
+    const imgKey = await this.storageService.upload(image);
 
-    await this.barberRepository.update(
-      id,
-      this.getBarberPayload(payload, image),
-    );
+    try {
+      await this.barberRepository.update(
+        id,
+        this.getBarberPayload(payload, imgKey),
+      );
+    } catch (error) {
+      await this.storageService.delete(imgKey);
+      throw error;
+    }
+
+    if (imgKey) {
+      await this.storageService.delete(barber.imgPath);
+    }
 
     return await this.getBarber(id);
   }
 
   async deleteBarber(id: number): Promise<boolean> {
-    await this.ckeckBarberExist(id);
+    const barber = await this.ckeckBarberExist(id);
     await this.barberRepository.delete(id);
+    await this.storageService.delete(barber.imgPath);
 
     return true;
   }
@@ -68,13 +99,13 @@ export class BarberService {
     return barber;
   }
 
-  getBarberPayload(payload: UpdateBarberDTO, image: Express.Multer.File) {
+  getBarberPayload(payload: UpdateBarberDTO, imgKey?: string) {
     return {
       name: payload.name,
       altegioId: Number(payload.altegioId),
       barbershop: payload.barbershopId && { id: Number(payload.barbershopId) },
       graduation: payload.graduationId && { id: Number(payload.graduationId) },
-      imgPath: image?.filename,
+      imgPath: imgKey,
     };
   }
 }

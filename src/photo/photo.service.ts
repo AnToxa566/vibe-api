@@ -1,15 +1,21 @@
 import { Repository } from 'typeorm';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Photo } from '../entities/photo.entity';
 import { PhotoDTO } from './dto/photo.dto';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable()
 export class PhotoService {
   constructor(
     @InjectRepository(Photo)
     private readonly photoRepository: Repository<Photo>,
+    private readonly storageService: StorageService,
   ) {}
 
   async getPhotos(): Promise<PhotoDTO[]> {
@@ -17,14 +23,26 @@ export class PhotoService {
   }
 
   async createPhoto(image: Express.Multer.File): Promise<PhotoDTO> {
-    return await this.photoRepository.save({
-      path: image.filename,
-    });
+    if (!image) {
+      throw new BadRequestException('Необходимо загрузить изображение.');
+    }
+
+    const key = await this.storageService.upload(image);
+
+    try {
+      const photo = await this.photoRepository.save({ path: key });
+
+      return { id: photo.id, path: this.storageService.getUrl(key) };
+    } catch (error) {
+      await this.storageService.delete(key);
+      throw error;
+    }
   }
 
   async deletePhoto(id: number): Promise<boolean> {
-    await this.ckeckPhotoExist(id);
+    const photo = await this.ckeckPhotoExist(id);
     await this.photoRepository.delete(id);
+    await this.storageService.delete(photo.path);
 
     return true;
   }

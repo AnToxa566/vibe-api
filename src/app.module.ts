@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -15,6 +13,7 @@ import { ServiceModule } from './service/service.module';
 import { PriceModule } from './price/price.module';
 import { UserModule } from './user/user.module';
 import { PhotoModule } from './photo/photo.module';
+import { StorageModule } from './storage/storage.module';
 
 import { Barbershop } from './entities/barbershop.entity';
 import { Barber } from './entities/barber.entity';
@@ -29,16 +28,37 @@ import { Photo } from './entities/photo.entity';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DB_HOST'),
-        port: configService.get('DB_PORT'),
-        username: configService.get('DB_USERNAME'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_NAME'),
-        synchronize: true,
-        entities: [User, Barbershop, Barber, Graduation, Service, Price, Photo],
-      }),
+      useFactory: (configService: ConfigService): TypeOrmModuleOptions => {
+        const url = configService.get<string>('DATABASE_URL');
+
+        return {
+          type: 'postgres',
+          ...(url
+            ? { url }
+            : {
+                host: configService.get<string>('DB_HOST'),
+                port: Number(configService.get('DB_PORT')),
+                username: configService.get<string>('DB_USERNAME'),
+                password: configService.get<string>('DB_PASSWORD'),
+                database: configService.get<string>('DB_NAME'),
+              }),
+          ssl:
+            configService.get('DB_SSL') === 'true'
+              ? { rejectUnauthorized: false }
+              : false,
+          poolSize: Number(configService.get('DB_POOL_SIZE') ?? 5),
+          synchronize: configService.get('DB_SYNCHRONIZE') === 'true',
+          entities: [
+            User,
+            Barbershop,
+            Barber,
+            Graduation,
+            Service,
+            Price,
+            Photo,
+          ],
+        };
+      },
       inject: [ConfigService],
     }),
     JwtModule.register({
@@ -46,10 +66,7 @@ import { Photo } from './entities/photo.entity';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads'),
-      serveRoot: '/api',
-    }),
+    StorageModule,
     BarbershopsModule,
     GraduationModule,
     BarberModule,

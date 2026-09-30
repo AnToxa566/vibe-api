@@ -13,29 +13,14 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 
 import { BarberService } from './barber.service';
 import { BarberDTO } from './dto/barber.dto';
 import { UpdateBarberDTO } from './dto/update-barber.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { Barber } from '../entities/barber.entity';
-
-export const fileOptions: MulterOptions = {
-  storage: diskStorage({
-    destination: './uploads',
-    filename: (req, file, cb) => {
-      const randomName = Array(32)
-        .fill(null)
-        .map(() => Math.round(Math.random() * 16).toString(16))
-        .join('');
-      return cb(null, `${randomName}${extname(file.originalname)}`);
-    },
-  }),
-};
+import { fileOptions } from '../storage/file-options';
 
 @Controller('barbers')
 export class BarberController {

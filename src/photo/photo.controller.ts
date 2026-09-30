@@ -14,7 +14,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { PhotoDTO } from './dto/photo.dto';
 import { PhotoService } from './photo.service';
 import { AuthGuard } from '../guards/auth.guard';
-import { fileOptions } from '../barber/barber.controller';
+import { fileOptions } from '../storage/file-options';
 
 @Controller('photos')
 export class PhotoController {
